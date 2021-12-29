@@ -5,7 +5,9 @@ The SQL Database Operator codifies Day 2 management & operations.  These operati
 
  - Updating the database DDL
 
-The SQL database being managed does not need to reside within the same kubernetes cluster, or even on a kubernetes cluster.  It was designed to provide a way to autnonoize operations of any SQL database, regardless of the technology that hosts the database instance. 
+The SQL database being managed does not need to reside within the same kubernetes cluster, or even on a kubernetes cluster.  It was designed to provide a way to autnonoize operations of any SQL database, regardless of the technology that hosts the database instance.
+
+View the [SQL Database Opeartor](https://github.com/WB3Tech-Operators/sql-database-operator)
 
 ### Supported Database Technologies
 - PostgreSQL
