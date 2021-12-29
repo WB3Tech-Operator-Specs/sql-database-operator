@@ -24,7 +24,6 @@ The follow aspects are limtations of the operator:
  - The management and operations actions are scoped to capbilties provided by the binary APIs utilized for the oeprator.
  - It does not provide any complinace or security hardening features.
 
-
 ### Specifiations
 This section defines the specifictions, protocol, and standards codified into the operator.
 
