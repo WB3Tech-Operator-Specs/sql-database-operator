@@ -1,0 +1,18 @@
+@startuml
+
+title "SQL Database Operator - State Diagram"
+
+state init as "Initializing"
+state op as "Operational"
+state noop as "Not Operational"
+state updt as "Update In Progress"
+state failed as "Failed Update"
+
+[*] --> init
+init --> op: Initialize Success
+init --> noop: Initialize Failed
+op --> updt : Update
+updt --> op : Update Success
+updt --> failed : Update Failed 
+
+@enduml

@@ -1,0 +1,70 @@
+@startuml name SQL Database Operator - Update DDL
+
+title "SQL Database Operator - Update DDL - Sequence Diagram"
+
+actor ops as "Human Opeartor"
+control k8s as "Kubernetes Control Plane"
+control dbctrl as "Database Controller"
+database repo as "DDL Repo"
+database db as "Database"
+
+ops -> k8s ++ : Apply Database CRD Spec
+k8s -> k8s : Update Database CRD Spec
+return Request Started
+
+k8s <--> dbctrl : Listen for Database CRD Spec actions
+
+activate dbctrl
+dbctrl -> dbctrl : Invoke Reconcile
+
+dbctrl --> k8s ++ : Request: Get updated Database CRD Spec
+return Response: New Database CRD 
+
+group Check Current State 
+        group Not Operational [Status.CurrentState != OPERATIONAL]
+        dbctrl -> dbctrl : Log "Not Operational, Cannot Update Database"
+        dbctrl --> k8s : Requeue CRD
+    end
+    group Operational [Status.CurrentState == OPERATIONAL]
+        dbctrl -> dbctrl : Set CRD.Status.CurrentState to "UPDATE IN PROGRESS"
+    end group
+end
+
+dbctrl -> dbctrl : Extract Spec.DDLVersion from CRD
+dbctrl --> repo ++ : Request: Get the DDL for corresponding Spec.DDLVersion
+return Response: DDL
+
+
+dbctrl --> db: Request: Apply DDL
+activate db
+
+group Apply DDL
+    db -> db : Apply DDL
+    group DDL Failure
+        dbctrl <-- db : Respone: DDL Failure
+        dbctrl -> dbctrl : Set CRD.Status.CurrentState to "FAILED UPDATE"
+        dbctrl -> dbctrl : Set CRD.Status.FailedVersion to Spec.DDLVersion
+        dbctrl -> dbctrl : Log "Failed to update databse to version [Spec.DDLVersion]"
+    end
+
+    group DDL Success
+        dbctrl <-- db : Response: DDL Success
+        deactivate db
+        dbctrl -> dbctrl : Set CRD.Status.CurrentState to "OPERATIONAL"
+    end
+        dbctrl -> dbctrl : Set CRD.Status.LastModified to current date & time
+        dbctrl --> k8s : Requeue CRD
+end
+
+
+
+
+
+
+
+
+deactivate dbctrl
+
+
+
+@enduml
