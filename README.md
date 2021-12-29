@@ -1,4 +1,5 @@
 # WB3Tech SQL Database Operator Specifications
+
 ## Overview
 
 The SQL Database Operator codifies Day 2 management & operations.  These operations currently include:
